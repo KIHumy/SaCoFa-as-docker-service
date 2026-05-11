@@ -113,7 +113,7 @@ def privatize_trace_variants(trace_frequencies, epsilon, followRelations, preced
     #        chosen_universe)
 
     while chosen_universe > 0:
-        for x in random.sample(violatesBASet.keys(), 1):
+        for x in random.sample(list(violatesBASet.keys()), 1): #added cast to list to make it compatible with newer python versions
             chosen_universe = chosen_universe - min(violatesBASet[x],sensitivity)
             conformsToBASet.append(x)
             violatesBASet.pop(x)

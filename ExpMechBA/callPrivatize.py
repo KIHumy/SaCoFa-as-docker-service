@@ -14,24 +14,27 @@ TRACE_START = "TRACE_START"
 TRACE_END = "TRACE_END"
 EVENT_DELIMETER = ">>>"
 
-P = 3
-P_smart = 2
-N = 10
+#P = 3
+#P_smart = 2
+#N = 10
 
-basePath = '/Users/stephan/SaCoFa_EventLogs'          # path to the folder containing all the event logs
-logName = 'CoSeLoG'                             # the preferrable file structure is given in the README
+#basePath = '/Users/stephan/SaCoFa_EventLogs'          # path to the folder containing all the event logs
+#logName = 'CoSeLoG'                             # the preferrable file structure is given in the README
 
-inPath = basePath + '/Logs/' + logName + '.xes'
-epsRange = [1.0]            # range of epsilon
-tries = 10
+#inPath = basePath + '/Logs/' + logName + '.xes'
+#epsRange = [1.0]            # range of epsilon
+#tries = 10
 #modeRange = ['laplace','ba','ba_prune','ba']
 modeRange = ['ba','laplace','occured','ba_prune']
 #modeRange = ['occured','ba',','ba_prune','ba_prune_multi']
 
 
-def main():
+def executeSacofa(P, P_smart, N, logName, epsRangeValue, tries):
+    basePath = "./SaCoFa/"          # path to the folder containing all the event logs
+    inPath = basePath + "input/" + logName #must be xes log
     log = readLogFile(inPath)
     counter = 1
+    epsRange = [epsRangeValue]
     for mode in modeRange:
         for eps in epsRange:
             for i in range(tries):
@@ -58,11 +61,11 @@ def main():
                 print("Done: " + mode + " eps = " + str(eps) + ", try = " + str(i) + '\n')
 
                 print("Writing to .csv...")
-                outPath_csv = basePath + '/Out/' + logName  + '/' + logName + '_' + str(eps) + '_' + mode + '_' + str(i) + ".csv"
+                outPath_csv =  basePath + "output/" + "output_sacofa_run.csv" #outPutPaths were changed
                 write_to_csv(frequencies=sanitized_frequencies, path=outPath_csv)
 
                 print("Writing to .xes...")
-                outPath_xes = basePath + '/Out/' + logName + '/' + logName  +  '_' + str(eps) + '_' + mode + '_' + str(i) + ".xes"
+                outPath_xes =  basePath + "output/" + "output_sacofa_run.xes" #outPutPaths were changed
                 write_to_xes(frequencies=sanitized_frequencies, path=outPath_xes)
 
     print("Done for all eps for all tries.")
@@ -114,6 +117,3 @@ def write_to_csv(frequencies, path):
             case += 1
     f.flush()
     f.close()
-
-
-main()
