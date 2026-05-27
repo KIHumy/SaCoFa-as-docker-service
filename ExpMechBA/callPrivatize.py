@@ -29,7 +29,7 @@ modeRange = ['ba','laplace','occured','ba_prune']
 #modeRange = ['occured','ba',','ba_prune','ba_prune_multi']
 
 
-def executeSacofa(P, P_smart, N, logName, epsRangeValue, tries):
+def executeSacofa(P, P_smart, N, logName, epsRangeValue, tries, instructionId):
     basePath = "./SaCoFa/"          # path to the folder containing all the event logs
     inPath = basePath + "input/" + logName #must be xes log
     log = readLogFile(inPath)
@@ -61,11 +61,11 @@ def executeSacofa(P, P_smart, N, logName, epsRangeValue, tries):
                 print("Done: " + mode + " eps = " + str(eps) + ", try = " + str(i) + '\n')
 
                 print("Writing to .csv...")
-                outPath_csv =  basePath + "output/" + "output_sacofa_run.csv" #outPutPaths were changed
+                outPath_csv =  basePath + "output/" + "output_sacofa_run_" + instructionId + ".csv" #outPutPaths were changed
                 write_to_csv(frequencies=sanitized_frequencies, path=outPath_csv)
 
                 print("Writing to .xes...")
-                outPath_xes =  basePath + "output/" + "output_sacofa_run.xes" #outPutPaths were changed
+                outPath_xes =  basePath + "output/" + "output_sacofa_run_" + instructionId + ".xes" #outPutPaths were changed
                 write_to_xes(frequencies=sanitized_frequencies, path=outPath_xes)
 
     print("Done for all eps for all tries.")

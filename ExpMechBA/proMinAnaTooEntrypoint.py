@@ -33,25 +33,25 @@ def collectRequirementsForAlgo():
     P_smart = {"name":"P_smart", "lowerBound":"2", "upperBound":"2", "type":"int"}
     N = {"name":"N", "lowerBound":"10", "upperBound":"10", "type":"int"}
     #basePath = {"name":"basePath", "value":"someString", "description":"This tring should be a file path to an event log.", "type":"string"}
-    logName = {"name":"logName", "value":"someString", "description":"This string should be the name of the event log.", "type":"string"}
+    #logName = {"name":"logName", "value":"someString", "description":"This string should be the name of the event log.", "type":"string"}
     #inPath = {"name":"inPath", "value":"someString", "description":"This string represents the path to the event log file.", "type":"string"}
     epsRange = {"name":"epsRange", "lowerBound":"1.0", "upperBound":"1.0", "type":"float"} #could be list[float] instead
     tries = {"name":"tries", "lowerBound":"10", "upperBound":"10", "type":"int"} #could be literal instead
-    algoVariables = [P, P_smart, N, logName, epsRange, tries]
-    return {**algoIdentity, "requirements":algoVariables}
+    algoVariables = [P, P_smart, N, epsRange, tries]
+    return {**algoIdentity, "inputFormat":"xes", "outputStructure":"eventLog", "requirements":algoVariables}
 
 def startInstructionHandler(instruction):
     print("Entered the instruction block.", flush=True)
-    if instruction == {"instruction":"start_n_test"}:
+    if instruction["instruction"] == "start_n_test":
         print("Accessed n_test function.", flush=True)
-        requests.post("http://cliandanalyzer:8000/result/status", json={**algoIdentity, "status":"network_stable"})
+        requests.post("http://cliandanalyzer:8000/result/status", json={**algoIdentity, "instructionId":instruction["instructionId"], "status":"network_stable"})
     if instruction == {"instruction":"send_requirements"}:
         print("Accessed requirements function.", flush=True)
         jsonRequirements = collectRequirementsForAlgo()
         requests.post("http://cliandanalyzer:8000/myRequirements", json=jsonRequirements)
-    if isinstance(instruction.get("instruction"), dict):
+    if instruction["instruction"] == "comparison":
         print("Accessed Template function.", flush=True)
-        algoDictionary = instruction.get("instruction")
+        algoDictionary = instruction.get("payload")
         P = 3
         P_smart = 2
         N = 10
@@ -77,7 +77,9 @@ def startInstructionHandler(instruction):
                 epsRange = inputValues["value"]
             if inputValues["name"] == "tries":
                 tries = inputValues["value"]
-        callPrivatize.executeSacofa(P, P_smart, N, logName, epsRange, tries)
+        callPrivatize.executeSacofa(P, P_smart, N, logName, epsRange, tries, instruction["instructionId"])
+        print("Sending the result of the template function to the server.", flush= True)
+        requests.post("http://cliandanalyzer:8000/result/status", json={**algoIdentity, "instructionId":instruction["instructionId"], "status":"finished_privacy_enhancing_algorithm"})
     return
 
 if __name__ == "__main__":
